@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="load()">
+    <nav>
+        <button>Dodaj zdarzenie</button>
+    </nav>
+    <main>
+        <h1>Zdarzenia szkolne:</h1>
+        <div id="zdarzenia">
+
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script>
+        function get(id){
+            return document.getElementById(id)
+        }
+
+        let zdarzenia = [
+            {
+                id: 1,
+                name: "Event bursa",
+                descritpion: "Ziemowit idzie na rente, ma 67 lat",
+                date: "12.01.2026"
+            },
+            {
+                id: 2,
+                name: "Akcja afganistan",
+                descritpion: "Głośnik w smietniku w kiblu",
+                date: "11.09.2025"
+            }
+        ]
+        function load(){
+            let content = ``
+            zdarzenia.forEach(zdarzenie => {
+                content += `
+                <div class="zdarzenie">
+                    <div class="">
+                        <div class="nazwa">`
+                            +zdarzenie.name+`
+                        </div>
+                            <div class="opis">`+ zdarzenie.descritpion+ `
+                        </div>    
+                    </div>
+                    <div class="data">`+ zdarzenie.date +`
+                        <button class="usun" onclick="usun(`+zdarzenie.id+`)">Usuń</button>
+                    </div>
+                </div>`
+            });
+            get("zdarzenia").innerHTML = content
+        }
+        function usun(id){
+            zdarzenia = zdarzenia.filter((zdarzenie) => zdarzenie.id !== id);
+            load();
+        }
+    </script>
+</body>
+</html>
