@@ -16,10 +16,17 @@ body {
     font-family: "Bricolage Grotesque", sans-serif;
 } main {
     width: 800px;
-} h1 {
+} nav {
+    width: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h1 {
     font-size: 2rem;
     text-transform: uppercase;
-}
+} .done{text-decoration: line-through;}
 #zdarzenia {
     display: flex;
     flex-direction: column;
@@ -32,20 +39,58 @@ body {
     justify-content: space-between;
     border-bottom: 0.5px solid white;
     padding: 20px;
+    cursor: pointer;
 }
 .nazwa {
     font-size: 1.5rem;
     font-weight: bold;
 } .opis {
     font-style: italic;
+    margin-bottom: 5px;
 } .data {
     height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
 } button.usun {
     background-color: transparent;
     color: hsl(0, 0%, 60%);
     cursor: pointer;
     margin-top: 5px;
+}
+footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 20px;
+    background-color: hsla(0, 0%, 5%, 0.918);
+}
+#error {
+    padding: 10px;
+    color: red;
+    display: none;
+    align-self: flex-end;
+}
+.modal {
+    display: flex;
+    justify-content: center;
+}
+.modal-content {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+} .modal-content button {
+    padding: 8px;
+    font-size: 20px;
+}
+input {
+    font-family: "Bricolage Grotesque", sans-serif;
+    box-sizing: border-box;
+    padding: 8px;
+    font-size: 20px;
+    border: 1px solid rgb(70, 70, 70);
+    background-color: transparent;
+    color: white;
+    border-radius: 5px;
+    width: 100%;
 }

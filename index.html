@@ -8,17 +8,28 @@
 </head>
 <body onload="load()">
     <nav>
-        <button>Dodaj zdarzenie</button>
+        <h1>Zdarzenia szkolne:</h1>
     </nav>
     <main>
-        <h1>Zdarzenia szkolne:</h1>
         <div id="zdarzenia">
 
         </div>
     </main>
     <footer>
-
+    <div class="modal" id="modal">
+            <div class="modal-content">
+                <h2>Dodaj zdarzenie</h2>
+                <input type="text" id="title" placeholder="tytuł zdarzenia">
+                <input type="text" id="desc" placeholder="opis zdarzenia">
+                <input type="date" name="date" id="date">
+                <button onclick="add()">Dodaj</button>
+                <div id="error">Wpisz poprawne dane i uzupełnij brakujące inputy!</div>
+            </div>
+        </div>
     </footer>
+
+
+
     <script>
         function get(id){
             return document.getElementById(id)
@@ -29,28 +40,32 @@
                 id: 1,
                 name: "Event bursa",
                 descritpion: "Ziemowit idzie na rente, ma 67 lat",
-                date: "12.01.2026"
+                date: "12.01.2026",
+                isDone: true,
             },
             {
                 id: 2,
                 name: "Akcja afganistan",
                 descritpion: "Głośnik w smietniku w kiblu",
-                date: "11.09.2025"
+                date: "11.09.2025",
+                isDone: false,
             }
         ]
         function load(){
             let content = ``
             zdarzenia.forEach(zdarzenie => {
                 content += `
-                <div class="zdarzenie">
-                    <div class="">
-                        <div class="nazwa">`
+                <div class="zdarzenie" onclick="zaznacz(`+ zdarzenie.id+`)">
+                    <div `+ (zdarzenie.isDone ? 'class="done"' : '') +`>
+                        <div class="nazwa `+ (zdarzenie.isDone ? 'done' : '') +`">`
                             +zdarzenie.name+`
                         </div>
-                            <div class="opis">`+ zdarzenie.descritpion+ `
+                            <div class="opis `+ (zdarzenie.isDone ? 'done' : '') +`">`+ zdarzenie.descritpion+ `
                         </div>    
+                        `+ zdarzenie.date +`
                     </div>
-                    <div class="data">`+ zdarzenie.date +`
+                    <div class="data">
+                        <button class="usun" onclick="edytuj(`+zdarzenie.id+`)">Edytuj</button>
                         <button class="usun" onclick="usun(`+zdarzenie.id+`)">Usuń</button>
                     </div>
                 </div>`
@@ -60,6 +75,38 @@
         function usun(id){
             zdarzenia = zdarzenia.filter((zdarzenie) => zdarzenie.id !== id);
             load();
+        }
+        function zaznacz(id){
+            zdarzenia = zdarzenia.map(zdarzenie => {
+                if (zdarzenie.id === id) {
+                    return {
+                        ...zdarzenie,
+                        isDone: !zdarzenie.isDone
+                    };
+                }
+                return zdarzenie;
+            });
+            load();
+        }
+        function add(){
+            let title = get('title').value
+            let desc = get('desc').value
+            let date = get('date').value
+
+            if(!title || !desc || !isNaN(date)) {
+                get('error').style.display = 'block'
+                return
+            }
+
+            zdarzenia.push({
+                id: zdarzenia.length + 1, 
+                name: title,
+                descritpion: desc,
+                date: date,
+                isDone: false
+            })
+            get('error').style.display = 'none'
+            load()
         }
     </script>
 </body>
