@@ -9,6 +9,8 @@
 <body onload="load()">
     <nav>
         <h1>Zdarzenia szkolne:</h1>
+        <input type="text" id="filter" placeholder="filrtuj 🔎">
+        <br>
     </nav>
     <main>
         <div id="zdarzenia">
@@ -31,31 +33,28 @@
 
 
     <script>
+        if (!localStorage.getItem("zdarzenia")) {
+            let zdarzeniainit = [];
+            localStorage.setItem("zdarzenia", JSON.stringify(zdarzeniainit));
+        }
+        let zdarzenia = JSON.parse(localStorage.getItem("zdarzenia"))
+
         function get(id){
             return document.getElementById(id)
         }
 
-        let zdarzenia = [
-            {
-                id: 1,
-                name: "Event bursa",
-                descritpion: "Ziemowit idzie na rente, ma 67 lat",
-                date: "12.01.2026",
-                isDone: true,
-            },
-            {
-                id: 2,
-                name: "Akcja afganistan",
-                descritpion: "Głośnik w smietniku w kiblu",
-                date: "11.09.2025",
-                isDone: false,
-            }
-        ]
         function load(){
             let content = ``
+
+            if(zdarzenia.length == 0){
+                content = 'Narazie nie posiadasz żadnych zdarzeń!'
+                get("zdarzenia").innerHTML = content
+                return
+            }
+            
             zdarzenia.forEach(zdarzenie => {
                 content += `
-                <div class="zdarzenie" onclick="zaznacz(`+ zdarzenie.id+`)">
+                <div class="zdarzenie" onclick="event.stopPropagation(); zaznacz(`+zdarzenie.id+`)">
                     <div `+ (zdarzenie.isDone ? 'class="done"' : '') +`>
                         <div class="nazwa `+ (zdarzenie.isDone ? 'done' : '') +`">`
                             +zdarzenie.name+`
@@ -65,8 +64,8 @@
                         `+ zdarzenie.date +`
                     </div>
                     <div class="data">
-                        <button class="usun" onclick="edytuj(`+zdarzenie.id+`)">Edytuj</button>
-                        <button class="usun" onclick="usun(`+zdarzenie.id+`)">Usuń</button>
+                        <button class="usun" onclick="event.stopPropagation(); edytuj(`+zdarzenie.id+`)">Edytuj</button>
+                        <button class="usun" onclick="event.stopPropagation(); usun(`+zdarzenie.id+`)">Usuń</button>
                     </div>
                 </div>`
             });
@@ -74,6 +73,7 @@
         }
         function usun(id){
             zdarzenia = zdarzenia.filter((zdarzenie) => zdarzenie.id !== id);
+            localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             load();
         }
         function zaznacz(id){
@@ -86,6 +86,7 @@
                 }
                 return zdarzenie;
             });
+            localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             load();
         }
         function add(){
@@ -93,7 +94,7 @@
             let desc = get('desc').value
             let date = get('date').value
 
-            if(!title || !desc || !isNaN(date)) {
+            if(!title || !desc || !date) {
                 get('error').style.display = 'block'
                 return
             }
@@ -105,6 +106,7 @@
                 date: date,
                 isDone: false
             })
+            localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             get('error').style.display = 'none'
             load()
         }
