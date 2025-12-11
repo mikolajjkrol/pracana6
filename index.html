@@ -9,7 +9,7 @@
 <body onload="load()">
     <nav>
         <h1>Zdarzenia szkolne:</h1>
-        <input type="text" id="filter" placeholder="filrtuj 🔎">
+        <input type="text" id="filter" placeholder="filrtuj 🔎" oninput="filtruj()">
         <br>
     </nav>
     <main>
@@ -18,9 +18,9 @@
         </div>
     </main>
     <footer>
-    <div class="modal" id="modal">
+        <div class="modal" id="modal">
             <div class="modal-content">
-                <h2>Dodaj zdarzenie</h2>
+                <h2>Dodaj zdarzenie <div onclick="turnModalOff()" style="cursor: pointer;">x</div></h2>
                 <input type="text" id="title" placeholder="tytuł zdarzenia">
                 <input type="text" id="desc" placeholder="opis zdarzenia">
                 <input type="date" name="date" id="date">
@@ -28,9 +28,12 @@
                 <div id="error">Wpisz poprawne dane i uzupełnij brakujące inputy!</div>
             </div>
         </div>
+        <div class="modal dodaj" id="dodaj">
+            <div class="modal-content">
+                <button onclick="turnModalOn()">Dodaj zadanie</button>
+            </div>
+        </div>
     </footer>
-
-
 
     <script>
         if (!localStorage.getItem("zdarzenia")) {
@@ -38,14 +41,13 @@
             localStorage.setItem("zdarzenia", JSON.stringify(zdarzeniainit));
         }
         let zdarzenia = JSON.parse(localStorage.getItem("zdarzenia"))
-
+        get('modal').style.display = 'none'
         function get(id){
             return document.getElementById(id)
         }
 
         function load(){
             let content = ``
-
             if(zdarzenia.length == 0){
                 content = 'Narazie nie posiadasz żadnych zdarzeń!'
                 get("zdarzenia").innerHTML = content
@@ -71,11 +73,13 @@
             });
             get("zdarzenia").innerHTML = content
         }
+
         function usun(id){
             zdarzenia = zdarzenia.filter((zdarzenie) => zdarzenie.id !== id);
             localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             load();
         }
+
         function zaznacz(id){
             zdarzenia = zdarzenia.map(zdarzenie => {
                 if (zdarzenie.id === id) {
@@ -89,6 +93,7 @@
             localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             load();
         }
+
         function add(){
             let title = get('title').value
             let desc = get('desc').value
@@ -109,6 +114,49 @@
             localStorage.setItem("zdarzenia", JSON.stringify(zdarzenia));
             get('error').style.display = 'none'
             load()
+        }
+
+        function filtruj(){
+            let szukanaWartosc = get('filter').value
+
+            if(!szukanaWartosc){
+                load()
+            }
+            
+            let filtrowane = []
+            zdarzenia.forEach((zdarzenie) => {
+                if(String(zdarzenie.name).includes(szukanaWartosc) || (String(zdarzenie.date).includes(szukanaWartosc)) || String(zdarzenie.descritpion).includes(szukanaWartosc)){
+                    filtrowane.push(zdarzenie)
+                } 
+            })            
+            let content = ``
+            filtrowane.forEach(zdarzenie => {
+                content += `
+                <div class="zdarzenie" onclick="event.stopPropagation(); zaznacz(`+zdarzenie.id+`)">
+                    <div `+ (zdarzenie.isDone ? 'class="done"' : '') +`>
+                        <div class="nazwa `+ (zdarzenie.isDone ? 'done' : '') +`">`
+                            +zdarzenie.name+`
+                        </div>
+                            <div class="opis `+ (zdarzenie.isDone ? 'done' : '') +`">`+ zdarzenie.descritpion+ `
+                        </div>    
+                        `+ zdarzenie.date +`
+                    </div>
+                    <div class="data">
+                        <button class="usun" onclick="event.stopPropagation(); edytuj(`+zdarzenie.id+`)">Edytuj</button>
+                        <button class="usun" onclick="event.stopPropagation(); usun(`+zdarzenie.id+`)">Usuń</button>
+                    </div>
+                </div>`
+            });
+
+            get("zdarzenia").innerHTML = content
+        }
+        function turnModalOn(){
+            get('modal').style.display = 'flex'
+            get('dodaj').style.display = 'none'
+        }
+        function turnModalOff(){
+            get('modal').style.display = 'none'
+            get('dodaj').style.display = 'flex'
         }
     </script>
 </body>
